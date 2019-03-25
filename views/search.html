@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="jp">
+
+<head>
+  <meta charset="UTF-8">
+  <title>担当者検索(Python3 + Bottle)</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+  <script src="/static/js/searchTextHilight.js"></script>
+  <script src="/static/js/search.js"></script>
+</head>
+
+<form name="table_assigns" method="GET" class="searchForm" onsubmit="mySubmit(this);">
+    <input type="text" value="" placeholder="検索ワードを入力してください" class="searchText"/>
+    <input type="submit" value="検索" />
+</form>
+
+<body class="searchBody">
+  <h2>検索ワード: &quot;{{searchTxt}}&quot;</h2>
+  <div id='searchTarget'>
+    %if len(table_assign) == 0:
+      <p>該当のデータがみつかりません</p>
+    %end
+    <table border="1">
+      
+      %for assigns in table_assign:
+      <tr>
+        <!-- <td>{{assigns["id"]}}</td>
+      <td>{{assigns["category2_id"]}}</td> -->
+        <td>{{assigns["category1_name"]}}</td>
+        <td>{{assigns["category2_name"]}}</td>
+        <td>{{assigns["counter_persons"]}}</td>
+        <td>{{assigns["responsible_person"]}}</td>
+      </tr>
+      %end
+    </table>
+  </div>
+
+
+  <script>
+    let target = document.querySelector("#searchTarget");
+    let beforeHtml = target.innerHTML;
+
+    var highlighter = new TextHighlighter("\t", [
+      new HighlightWord(["{{searchTxt}}"], "FFD700")
+    ]);
+
+    var replacedHtml = highlighter.text2HighlightHTML(beforeHtml);
+    target.innerHTML = replacedHtml;
+  </script>
+
+<script src="/static/js/main.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="jp">
+
+<head>
+  <meta charset="UTF-8">
+  <title>担当者検索(Python3 + Bottle)</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+  <script src="/static/js/search.js"></script>
+</head>
+
+<body>
+  <div class="content">
+    <h2>担当変更</h2>
+    <form name="table_assigns" method="POST" action="/assigns_update">
+
+      <div>
+        <p>変更前情報</p>
+        %for assigns in table_assign_edit:
+          <div style="border:1px solid #fff; display:inline-block; padding:4px 10px; margin-bottom:30px;">
+            <span>{{assigns["id"]}}</span><br>
+            <span>{{assigns["category1_name"]}}/{{assigns["category2_name"]}}</span><br>
+            <span>{{assigns["counter_persons"]}}</span><br>
+            <span>{{assigns["responsible_person"]}}</span>
+          </div>
+        %end
+      </div>
+      %for edit in table_assign_edit:
+      <input type="hidden" name="assign_id" value="{{assigns['id']}}">
+      <select name="category2_id" class="select-category" required>
+        <option value=""></option>
+        %for cat2s in table_category2:
+          %if cat2s["category1_name"]+cat2s["category2_name"] == edit["category1_name"]+edit["category2_name"] :
+          <option value="{{cat2s['id']}}" selected>{{cat2s["category1_name"]}}/{{cat2s["category2_name"]}}</option>
+          %else:
+          <option value="{{cat2s['id']}}">{{cat2s["category1_name"]}}/{{cat2s["category2_name"]}}</option>
+          %end
+        %end
+      </select>
+      <select name="counter_persons" size="10" multiple required>
+        %for person in table_person:
+          %selected = 0
+          %for counter_person_edit in lst_counter_persons_edit:
+            %if person['person_name'] == counter_person_edit :
+              %selected = 1
+            %end
+          %end
+          %if selected == 1:
+            <option value="{{person['person_name']}}" selected>{{person['person_name']}}</option>
+          %else:
+            <option value="{{person['person_name']}}" >{{person['person_name']}}</option>
+          %end
+        %end
+      </select>
+      <select name="responsible_person" required>
+          %for person in table_person:
+            %selected = 0
+            %for responsible_person_edit in lst_responsible_person_edit:
+              %if person['person_name'] == responsible_person_edit :
+                %selected = 1
+              %end
+            %end
+            %if selected == 1:
+              <option value="{{person['person_name']}}" selected>{{person['person_name']}}</option>
+            %else:
+              <option value="{{person['person_name']}}" >{{person['person_name']}}</option>
+            %end
+          %end
+        </select>
+      %end
+      <input type="submit" value="更新" />
+    </form>
+  </div>
+  <script src="/static/js/main.js"></script>
+</body>
+</html>

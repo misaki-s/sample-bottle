@@ -1,0 +1,139 @@
+:root{
+  font-size:12px;
+  background: #333;
+  color:#fff;
+}
+body{
+  margin:0;
+  padding:0;
+}
+select,input,textarea{
+  background: transparent;
+  color: #fff;
+}
+select{
+  width: 80px;
+}
+select.select-category{
+  width: 200px;
+}
+
+select[multiple] {
+  width: 80px;
+  vertical-align: top;
+}
+input{
+  vertical-align: top;
+}
+table,td,th {
+  border-collapse: collapse;
+  border:1px solid #fff;
+}
+td,th {
+  padding: 2px 4px;
+  vertical-align: top;
+}
+.btn{
+  border:1px solid #fff;
+  border-radius:4px;
+  background: #fff;
+  padding: 2px 4px;
+  color: #333;
+  text-decoration: none;
+}
+.btn-edit{
+  background: rgba(16, 49, 5, 0.2);
+  color: #fff;
+}
+.btn-delete{
+  background: rgb(90, 5, 5);
+  color: #fff;
+}
+.searchForm input{
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  box-sizing: border-box;
+  height:30px;
+}
+.searchForm input[type=text]{
+  width: 300px;
+  padding-right: 10px;
+  padding-left: 10px;
+}
+.searchForm input[type=submit]{
+  padding: 2px 4px;
+}
+.tab_content,
+.searchBody{
+  text-align: center;
+  margin:50px;
+}
+.tab_content table,
+.searchBody table{
+  margin: auto; /* center */
+  text-align: initial;
+}
+.content{
+  padding:0 0 30px;
+}
+
+
+
+/*タブ切り替え全体のスタイル*/
+.tabs {
+  margin-top: 50px;
+  /* padding-bottom: 40px; */
+  background-color: #333;
+  /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); */
+  width: 100%;
+  margin: 0 auto;}
+
+/*タブのスタイル*/
+.tab_item {
+  width: calc(100%/4);
+  height: 50px;
+  background-color: #666;
+  color: #333;
+  background-color: #d9d9d9;
+  line-height: 50px;
+  font-size: 16px;
+  text-align: center;
+  display: block;
+  float: left;
+  text-align: center;
+  font-weight: bold;
+  transition: all 0.2s ease;
+}
+.tab_item:hover {
+  opacity: 0.75;
+}
+
+/*ラジオボタンを全て消す*/
+input[name="tab_item"] {
+  display: none;
+}
+
+/*タブ切り替えの中身のスタイル*/
+.tab_content {
+  display: none;
+  padding: 40px 40px 0;
+  clear: both;
+  overflow: hidden;
+}
+
+
+/*選択されているタブのコンテンツのみを表示*/
+#tab1:checked ~ #tab1_content,
+#tab2:checked ~ #tab2_content,
+#tab3:checked ~ #tab3_content,
+#tab4:checked ~ #tab4_content,
+#tab5:checked ~ #tab5_content {
+  display: block;
+}
+
+/*選択されているタブのスタイルを変える*/
+.tabs input:checked + .tab_item {
+  background-color: #333;
+  color: #d9d9d9;
+}

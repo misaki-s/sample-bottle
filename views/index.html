@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="jp">
+
+<head>
+  <meta charset="UTF-8">
+  <title>担当者検索(Python3 + Bottle)</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+  <script src="/static/js/search.js"></script>
+</head>
+
+<body>
+
+  <div class="tabs">
+    <input id="tab1" type="radio" name="tab_item" checked>
+    <label class="tab_item" for="tab1">担当者一覧</label>
+    <!-- <input id="tab2" type="radio" name="tab_item">
+    <label class="tab_item" for="tab2">担当登録</label> -->
+    <input id="tab3" type="radio" name="tab_item">
+    <label class="tab_item" for="tab3">カテゴリ2</label>
+    <input id="tab4" type="radio" name="tab_item">
+    <label class="tab_item" for="tab4">カテゴリ1</label>
+    <input id="tab5" type="radio" name="tab_item">
+    <label class="tab_item" for="tab5">メンバー一覧</label>
+    <div class="tab_content" id="tab1_content">
+      <div class="tab_content_description">
+        <div>
+
+          <div class="content">
+            <h2>担当登録</h2>
+            <form name="table_assigns" method="POST" action="/assigns_add">
+              <table>
+                <tr><th>カテゴリ</th><th>窓口担当者</th><th>責任者</th><th></th></tr>
+                <tr><td>
+                    <select name="category2_id" class="select-category" required>
+                        <option value=""></option>
+                        %for cat2s in table_category2:
+                        <option value="{{cat2s['id']}}">{{cat2s["category1_name"]}}/{{cat2s["category2_name"]}}</option>
+                        %end
+                      </select>
+                </td><td>
+                    <select name="counter_persons" size="10" multiple required>
+                        %for persons in table_person:
+                        <option value="{{persons['person_name']}}">{{persons["person_name"]}}</option>
+                        %end
+                      </select>
+                </td><td>
+                    <select name="responsible_person" required>
+                        %for persons in table_person:
+                        <option value="{{persons['person_name']}}">{{persons["person_name"]}}</option>
+                        %end
+                      </select>
+                </td><td>
+                  <input type="submit" value="追加" />
+                </td>
+              </tr>
+              </table>
+
+            </form>
+          </div>
+
+          <div class="content">
+              <h2>担当検索</h2>
+          <form name="table_assigns" method="GET" class="searchForm" onsubmit="mySubmit(this);">
+            <input type="text" value="" placeholder="検索ワードを入力してください" class="searchText" />
+            <input type="submit" value="検索" />
+          </form>
+        </div>
+
+        <div class="content">
+          <h2>担当一覧</h2>
+          <table border="1">
+              <tr>
+                <th>id</th>
+                <!-- <th>category2_id</th> -->
+                <th>カテゴリ1名</th>
+                <th>カテゴリ2名</th>
+                <th>窓口担当者</th>
+                <th>責任者</th>
+                <th colspan="2">データ操作</th>
+              </tr>
+            %for assigns in table_assign:
+            <tr>
+              <td>{{assigns["id"]}}</td>
+              <!-- <td>{{assigns["category2_id"]}}</td> -->
+              <td>{{assigns["category1_name"]}}</td>
+              <td>{{assigns["category2_name"]}}</td>
+              <td>{{assigns["counter_persons"]}}</td>
+              <td>{{assigns["responsible_person"]}}</td>
+              <td><a href="/assigns_edit/{{assigns['id']}}" class="btn btn-edit">編集</a></td>
+              <td><a href="/assigns_delete/{{assigns['id']}}" class="btn btn-delete">削除</a></td>
+            </tr>
+            %end
+          </table>
+        </div>
+        </div>
+      </div>
+    </div>
+    <!-- <div class="tab_content" id="tab2_content">
+      <div class="tab_content_description">
+        <div>
+        </div>
+      </div>
+    </div> -->
+    <div class="tab_content" id="tab3_content">
+      <div class="tab_content_description">
+        <div>
+
+          <h2>カテゴリ２ 新規登録</h2>
+          <form name="table_category2" method="POST" action="/category2_add">
+            <select name="category1_name" class="select-category" required>
+              <option value=""></option>
+              %for category1s in table_category1:
+              <option value="{{category1s['category1_name']}}">{{category1s["category1_name"]}}</option>
+              %end
+            </select>
+            <input type="text" name="category2_name" placeholder="カテゴリ２を入力" required />
+            <input type="submit" value="追加" />
+          </form>
+
+          <h2>カテゴリリスト</h2>
+          <table border="1">
+            %for category2s in table_category2:
+            <tr>
+              <td>{{category2s["id"]}}</td>
+              <td>{{category2s["category1_name"]}}</td>
+              <td>{{category2s["category2_name"]}}</td>
+              <td><a href="/category2_delete/{{category2s['id']}}" class="btn btn-delete">削除</a></td>
+            </tr>
+            %end
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="tab_content" id="tab4_content">
+      <div class="tab_content_description">
+        <div>
+          <h2>カテゴリ1登録</h2>
+          <form name="table_category1" method="POST" action="/category1_add">
+            <input type="text" name="category1_name" placeholder="カテゴリ１を入力" required />
+            <input type="submit" value="追加" />
+          </form>
+
+          <h2>カテゴリ1リスト</h2>
+          <table border="1">
+            %for category1s in table_category1:
+            <tr>
+              <td>{{category1s["id"]}}</td>
+              <td>{{category1s["category1_name"]}}</td>
+              <td><a href="/category1_delete/{{category1s['id']}}" class="btn btn-delete">削除</a></td>
+            </tr>
+            %end
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="tab_content" id="tab5_content">
+      <div class="tab_content_description">
+        <div>
+          <h2>担当者登録</h2>
+          <form name="table_person" method="POST" action="/person_add">
+            <input type="text" name="person_name" placeholder="担当者名を入力" required />
+            <input type="submit" value="追加" />
+          </form>
+
+          <h2>担当者リスト</h2>
+          <table border="1">
+            %for persons in table_person:
+            <tr>
+              <td>{{persons["id"]}}</td>
+              <td>{{persons["person_name"]}}</td>
+              <td><a href="/person_delete/{{persons['id']}}" class="btn btn-delete">削除</a></td>
+            </tr>
+            %end
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+
+  <script src="/static/js/main.js"></script>
+
+
+
+</body>
+
+</html>
