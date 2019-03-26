@@ -11,6 +11,8 @@ Array.from(tabs, function (e) {
   if(hash){
     document.querySelector(hash).setAttribute('checked', true);
   }
+
+  document.querySelector('.searchText').focus();
 })();
 
 
