@@ -441,4 +441,4 @@ def add():
 
 # テスト用のサーバをlocalhost:8888で起動する
 # run(host="192.168.45.82", port=8888, debug=None, reloader=False, interval=180, quiet=True)
-web.serve(app, host='192.168.45.82', port=8888, daemon_threads=False, threadpool_workers=25, use_threadpool=True)
+web.serve(app, host='0.0.0.0', port=8888, daemon_threads=False, threadpool_workers=25, use_threadpool=True)
