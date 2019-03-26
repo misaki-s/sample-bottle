@@ -9,7 +9,7 @@ body{
 }
 select,input,textarea{
   background: transparent;
-  color: #fff;
+  color: #aaa;
 }
 select{
   width: 80px;

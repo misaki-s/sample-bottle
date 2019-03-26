@@ -369,9 +369,15 @@ def edit(id):
     #     lst_counter_persons = assigns["counter_persons"].split(",")
     # 担当者選択情報
     for assigns in table_assign_edit:
-        lst_counter_persons_edit = assigns["counter_persons"].split(",")
+        if assigns["counter_persons"] == None:
+            lst_counter_persons_edit = ""
+        else:
+            lst_counter_persons_edit = assigns["counter_persons"].split(",")
     for assigns in table_assign_edit:
-        lst_responsible_person_edit = assigns["responsible_person"].split(",")
+        if assigns["responsible_person"] == None:
+            lst_responsible_person_edit = ""
+        else:
+            lst_responsible_person_edit = assigns["responsible_person"].split(",")
     return template("edit.html",
         table_person=table_person,
         table_category1=table_category1, 
