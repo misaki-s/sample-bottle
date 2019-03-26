@@ -1,4 +1,5 @@
-from bottle import route, run, template, redirect, request, get, static_file
+from bottle import route, run, template, redirect, request, get, static_file, Bottle
+from paste import httpserver as web
 import os.path, functools
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 TEMPLATE_PATH = [
@@ -6,6 +7,8 @@ TEMPLATE_PATH = [
 ]
 STATIC_DIR = os.path.join(BASE_DIR, 'static')
 import sqlite3
+
+app = Bottle()
 
 # データベースに接続
 dbname = "sqlite.db"
@@ -57,44 +60,45 @@ conn.close()
 
 
 # Static file
-@route('/static/css/<filename:path>')
+@app.route('/static/css/<filename:path>')
 def send_static(filename):
     return static_file(filename, root=f'{STATIC_DIR}/css')
 
-@route('/static/font/<filename:re:.*\.(eot|otf|svg|ttf|woff|woff2?)>')
+@app.route('/static/font/<filename:re:.*\.(eot|otf|svg|ttf|woff|woff2?)>')
 def send_static(filename):
     return static_file(filename, root=f'{STATIC_DIR}/font')
 
-@route('/static/imgs/<filename:re:.*\.(jpg|png|gif|ico|svg)>')
+@app.route('/static/imgs/<filename:re:.*\.(jpg|png|gif|ico|svg)>')
 def send_static(filename):
     return static_file(filename, root=f'{STATIC_DIR}/img')
 
-@route('/static/js/<filename:re:.*\.js>')
+@app.route('/static/js/<filename:re:.*\.js>')
 def send_static(filename):
     return static_file(filename, root=f'{STATIC_DIR}/js')
 
 
 # / にアクセスしたら、index関数が呼ばれる
-@route("/")
-@route("/search/") #キーワード未指定の場合
+@app.route("/")
+@app.route("/search/") #キーワード未指定の場合
 def index():
     table_person = get_table_person()
     table_category1 = get_table_category1()
     table_category2 = get_table_category2()
     table_assign = get_table_assign()
-    return template("index.html", 
+    return template("index.html",
         table_person=table_person,
-        table_category1=table_category1, 
-        table_category2=table_category2, 
-        table_assign=table_assign, 
+        table_category1=table_category1,
+        table_category2=table_category2,
+        table_assign=table_assign,
         template_lookup=TEMPLATE_PATH)
 
-@route("/search/<txt:path>")
+@app.route("/search/<txt:path>")
 def callback(txt):
+    print(txt)
     if len(txt) > 0:
         table_assign = search_table_assign(txt)
         return template("search.html",
-            table_assign=table_assign, 
+            table_assign=table_assign,
             searchTxt=txt,
             template_lookup=TEMPLATE_PATH)
     else :
@@ -104,21 +108,21 @@ def callback(txt):
  person
 ------------------------- """
 # methodにPOSTを指定して、add関数を実装する
-@route("/person_add", method="POST")
+@app.route("/person_add", method="POST")
 def add():
     person_name = request.forms.getunicode("person_name")
     save_table_person(person_name)
     return redirect("/#tab5")
 
-# @routeデコレータの引数で<xxxx>と書いた部分は引数として関数に引き渡すことができます。
-@route("/person_delete/<id:int>")
+# @app.routeデコレータの引数で<xxxx>と書いた部分は引数として関数に引き渡すことができます。
+@app.route("/person_delete/<id:int>")
 def delete(id):
     delete_table_person(id)
     return redirect("/#tab5")
 
 
 def get_table_person():
-    conn = sqlite3.connect(dbname)
+    conn = sqlite3.connect(dbname, isolation_level="DEFERRED")
     c = conn.cursor()
     select = "select id, person_name from table_person"
     c.execute(select)
@@ -151,14 +155,14 @@ def delete_table_person(id):
  category1
 ------------------------- """
 # methodにPOSTを指定して、add関数を実装する
-@route("/category1_add", method="POST")
+@app.route("/category1_add", method="POST")
 def add():
     category1_name = request.forms.getunicode("category1_name")
     save_table_category1(category1_name)
     return redirect("/#tab4")
 
-# @routeデコレータの引数で<xxxx>と書いた部分は引数として関数に引き渡すことができます。
-@route("/category1_delete/<id:int>")
+# @app.routeデコレータの引数で<xxxx>と書いた部分は引数として関数に引き渡すことができます。
+@app.route("/category1_delete/<id:int>")
 def delete(id):
     delete_table_category1(id)
     return redirect("/#tab4")
@@ -198,15 +202,15 @@ def delete_table_category1(id):
  category2
 ------------------------- """
 # methodにPOSTを指定して、add関数を実装する
-@route("/category2_add", method="POST")
+@app.route("/category2_add", method="POST")
 def add():
     category1_name = request.forms.getunicode("category1_name")
     category2_name = request.forms.getunicode("category2_name")
     save_table_category2(category1_name, category2_name)
     return redirect("/#tab3")
 
-# @routeデコレータの引数で<xxxx>と書いた部分は引数として関数に引き渡すことができます。
-@route("/category2_delete/<id:int>")
+# @app.routeデコレータの引数で<xxxx>と書いた部分は引数として関数に引き渡すことができます。
+@app.route("/category2_delete/<id:int>")
 def delete(id):
     delete_table_category2(id)
     return redirect("/#tab3")
@@ -246,7 +250,7 @@ def delete_table_category2(id):
  assign
 ------------------------- """
 # methodにPOSTを指定して、add関数を実装する
-@route("/assigns_add", method="POST")
+@app.route("/assigns_add", method="POST")
 def add():
     category2_id = request.forms.getunicode("category2_id")
     counter_persons = request.forms.decode().getall("counter_persons") # getAll() charcode `latin1`
@@ -259,8 +263,8 @@ def add():
     save_table_assign(category2_id, counter_person_csv, responsible_person)
     return redirect("/#tab2")
 
-# @routeデコレータの引数で<xxxx>と書いた部分は引数として関数に引き渡すことができます。
-@route("/assigns_delete/<id:int>")
+# @app.routeデコレータの引数で<xxxx>と書いた部分は引数として関数に引き渡すことができます。
+@app.route("/assigns_delete/<id:int>")
 def delete(id):
     delete_table_assign(id)
     return redirect("/#tab2")
@@ -269,7 +273,7 @@ def get_table_assign():
     conn = sqlite3.connect(dbname)
     c = conn.cursor()
     select = '''
-select 
+select
 table_assign.id,
 table_assign.category2_id,
 table_category2.category1_name,
@@ -324,7 +328,7 @@ def search_table_assign(txt):
     conn = sqlite3.connect(dbname)
     c = conn.cursor()
     select = '''
-select 
+select
 table_assign.id,
 table_assign.category2_id,
 table_category2.category1_name,
@@ -333,7 +337,7 @@ table_assign.counter_persons,
 table_assign.responsible_person
  from table_assign inner join table_category2
 on table_assign.category2_id = table_category2.id
-where 
+where
 table_category2.category1_name like '%'''+txt+'''%' or
 table_category2.category2_name like '%'''+txt+'''%' or
 table_assign.counter_persons like '%'''+txt+'''%' or
@@ -356,8 +360,8 @@ table_assign.responsible_person like '%'''+txt+'''%'
 """ -------------------------
  edit
 ------------------------- """
-# @routeデコレータの引数で<xxxx>と書いた部分は引数として関数に引き渡すことができます。
-@route("/assigns_edit/<id:int>")
+# @app.routeデコレータの引数で<xxxx>と書いた部分は引数として関数に引き渡すことができます。
+@app.route("/assigns_edit/<id:int>")
 def edit(id):
     table_person = get_table_person()
     table_category1 = get_table_category1()
@@ -380,10 +384,10 @@ def edit(id):
             lst_responsible_person_edit = assigns["responsible_person"].split(",")
     return template("edit.html",
         table_person=table_person,
-        table_category1=table_category1, 
-        table_category2=table_category2, 
+        table_category1=table_category1,
+        table_category2=table_category2,
         table_assign=table_assign,
-        table_assign_edit=table_assign_edit, 
+        table_assign_edit=table_assign_edit,
         # lst_counter_persons=lst_counter_persons,
         lst_counter_persons_edit=lst_counter_persons_edit,
         lst_responsible_person_edit=lst_responsible_person_edit,
@@ -393,7 +397,7 @@ def get_table_assign_byid(id):
     conn = sqlite3.connect(dbname)
     c = conn.cursor()
     select = '''
-select 
+select
 table_assign.id,
 table_assign.category2_id,
 table_category2.category1_name,
@@ -420,7 +424,7 @@ on table_assign.category2_id = table_category2.id
     return table_assign
 
 # methodにPOSTを指定して、add関数を実装する
-@route("/assigns_update", method="POST")
+@app.route("/assigns_update", method="POST")
 def add():
     assign_id = request.forms.getunicode("assign_id")
     category2_id = request.forms.getunicode("category2_id")
@@ -436,4 +440,5 @@ def add():
     return redirect("/#tab2")
 
 # テスト用のサーバをlocalhost:8888で起動する
-run(host="localhost", port=8888, debug=True, reloader=True)
+# run(host="192.168.45.82", port=8888, debug=None, reloader=False, interval=180, quiet=True)
+web.serve(app, host='192.168.45.82', port=8888, daemon_threads=False, threadpool_workers=25, use_threadpool=True)
