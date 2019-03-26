@@ -60,8 +60,8 @@
 
           <div class="content">
               <h2>担当検索</h2>
-          <form name="table_assigns" method="GET" class="searchForm" onsubmit="mySubmit(this);">
-            <input type="text" value="" placeholder="検索ワードを入力してください" class="searchText" />
+          <form name="table_assigns" method="POST" class="searchForm" onsubmit="mySubmit(this);">
+            <input type="text" value="" placeholder="検索ワードを入力してください" class="searchText" name="searchText" />
             <input type="submit" value="検索" />
           </form>
         </div>

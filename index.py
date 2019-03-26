@@ -79,7 +79,7 @@ def send_static(filename):
 
 # / にアクセスしたら、index関数が呼ばれる
 @app.route("/")
-@app.route("/search/") #キーワード未指定の場合
+# @app.route("/search/") #キーワード未指定の場合
 def index():
     table_person = get_table_person()
     table_category1 = get_table_category1()
@@ -92,9 +92,9 @@ def index():
         table_assign=table_assign,
         template_lookup=TEMPLATE_PATH)
 
-@app.route("/search/<txt:path>")
-def callback(txt):
-    print(txt)
+@app.route("/search", method="POST")
+def callback():
+    txt = request.forms.getunicode("searchText")
     if len(txt) > 0:
         table_assign = search_table_assign(txt)
         return template("search.html",
