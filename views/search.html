@@ -40,12 +40,17 @@
     let target = document.querySelector("#searchTarget");
     let beforeHtml = target.innerHTML;
 
-    var highlighter = new TextHighlighter("\t", [
-      new HighlightWord(["{{searchTxt}}"], "FFD700")
-    ]);
+    console.log("ハイライト文字列"+"{{searchTxt}}");
+    if("{{searchTxt}}".length == 1 && /[A-Za-z0-9]/.test("{{searchTxt}}")){
+        console.log("NGワードによりハイライトを無効化しました。");
+        
+    }else{
 
-    var replacedHtml = highlighter.text2HighlightHTML(beforeHtml);
-    target.innerHTML = replacedHtml;
+      var highlighter = new TextHighlighter("\t", [new HighlightWord(["{{searchTxt}}"], "FFD700")]);
+
+      var replacedHtml = highlighter.text2HighlightHTML(beforeHtml);
+      target.innerHTML = replacedHtml;
+    }
   </script>
 
 <script src="/static/js/main.js"></script>
