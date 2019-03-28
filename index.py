@@ -282,6 +282,7 @@ table_assign.counter_persons,
 table_assign.responsible_person
  from table_assign inner join table_category2
 on table_assign.category2_id = table_category2.id
+order by table_category2.category1_name asc
 '''
     c.execute(select)
     table_assign = []
