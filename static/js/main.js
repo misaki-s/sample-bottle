@@ -6,12 +6,28 @@ Array.from(tabs, function (e) {
   });
 });
 (function () {
-  console.log("set hash");
+  // 削除ボタンに確認メッセージを追加
+  let btnDelete = document.querySelectorAll('.btn-delete');
+  Array.from(btnDelete,  function(e) {
+    console.log(e);
+    e.addEventListener('click', function(e){
+      if(window.confirm('削除しますか？')){
+        return true;
+      } else {
+        e.preventDefault();
+        return false;
+      }
+    });
+  });
+
+  // URLにハッシュがある場合、タブを切り替える。
+  // console.log("set hash");
   let hash = location.hash;
   if(hash){
     document.querySelector(hash).setAttribute('checked', true);
   }
 
+  // ページロード時に検索にフォーカスさせる。
   document.querySelector('.searchText').focus();
 })();
 
